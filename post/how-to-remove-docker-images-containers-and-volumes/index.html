@@ -186,12 +186,39 @@
             <div class="toc-box">
   <div class="toc-wrapper" id="toc_wrapper">
     <ul class="markdownIt-TOC">
-<li>
+<li><a href="#how-to-remove-docker-images-containers-and-volumes">How To Remove Docker Images, Containers, and Volumes</a>
 <ul>
-<li><a href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99">🏠 关于本站</a></li>
-<li><a href="#%E5%8D%9A%E4%B8%BB%E6%98%AF%E8%B0%81">👨‍💻 博主是谁</a></li>
-<li><a href="#%E5%85%B4%E8%B6%A3%E7%88%B1%E5%A5%BD">⛹ 兴趣爱好</a></li>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
+<li><a href="#a-docker-cheat-sheet">A Docker Cheat Sheet</a>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+</ul>
+</li>
+<li><a href="#purging-all-unused-or-dangling-images-containers-volumes-and-networks">Purging All Unused or Dangling Images, Containers, Volumes, and Networks</a></li>
+<li><a href="#removing-docker-images">Removing Docker Images</a>
+<ul>
+<li><a href="#remove-one-or-more-specific-images">Remove one or more specific images</a></li>
+<li><a href="#remove-dangling-images">Remove dangling images</a></li>
+<li><a href="#removing-images-according-to-a-pattern">Removing images according to a pattern</a></li>
+<li><a href="#remove-all-images">Remove all images</a></li>
+</ul>
+</li>
+<li><a href="#removing-containers">Removing Containers</a>
+<ul>
+<li><a href="#remove-one-or-more-specific-containers">Remove one or more specific containers</a></li>
+<li><a href="#remove-a-container-upon-exit">Remove a container upon exit</a></li>
+<li><a href="#remove-all-exited-containers">Remove all exited containers</a></li>
+<li><a href="#remove-containers-using-more-than-one-filter">Remove containers using more than one filter</a></li>
+<li><a href="#remove-containers-according-to-a-pattern">Remove containers according to a pattern</a></li>
+<li><a href="#stop-and-remove-all-containers">Stop and remove all containers</a></li>
+</ul>
+</li>
+<li><a href="#removing-volumes">Removing Volumes</a>
+<ul>
+<li><a href="#remove-one-or-more-specific-volumes-docker-19-and-later">Remove one or more specific volumes - Docker 1.9 and later</a></li>
+<li><a href="#remove-dangling-volumes-docker-19-and-later">Remove dangling volumes - Docker 1.9 and later</a></li>
+<li><a href="#remove-a-container-and-its-volume">Remove a container and its volume</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -432,38 +459,214 @@ window.addEventListener('load', function() {
               <div class="article-box">
     <header class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://dadada12138.github.io/post/about">
-      关于
+    <a class="post-title-link" href="https://dadada12138.github.io/post/how-to-remove-docker-images-containers-and-volumes">
+      How To Remove Docker Images, Containers, and Volumes
     </a>
   </h1>
   <div class="post-meta">
     <span class="meta-item">
       <i class="iconfont icon-calendar_empty"></i>
       <span class="pc-show">发布于</span>
-      <span>2019-01-25</span>
+      <span>2019-12-30</span>
     </span>
     
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="iconfont icon-time"></i>
-      <span>1分钟</span>
+      <span>8分钟</span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="iconfont icon-keyboard"></i>
-      <span class="pc-show">31字数</span>
+      <span class="pc-show">1258字数</span>
     </span>
   </div>
 </header>
 </div>
               <div class="post-body next-md-body" id="post_body">
-                <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+                <h1 id="how-to-remove-docker-images-containers-and-volumes">How To Remove Docker Images, Containers, and Volumes</h1>
+<h2 id="a-docker-cheat-sheet">A Docker Cheat Sheet</h2>
+<h3 id="introduction">Introduction</h3>
+<p>Docker makes it easy to wrap your applications and services in containers so<br>
+you can run them anywhere. As you work with Docker, however, it’s also easy to<br>
+accumulate an excessive number of unused images, containers, and data volumes<br>
+that clutter the output and consume disk space.</p>
+<p>Docker gives you all the tools you need to clean up your system from the<br>
+command line. This cheat sheet-style guide provides a quick reference to<br>
+commands that are useful for freeing disk space and keeping your system<br>
+organized by removing unused Docker images, containers, and volumes.</p>
+<p><strong>How to Use This Guide:</strong></p>
+<ul>
+<li>This guide is in cheat sheet format with self-contained command-line snippets</li>
+<li>Jump to any section that is relevant to the task you are trying to complete.</li>
+</ul>
+<p>The command substitution syntax, <code>command $(command)</code>, used in the commands is<br>
+available in many popular shells such as bash, zsh, and Windows Powershell.</p>
+<h2 id="purging-all-unused-or-dangling-images-containers-volumes-and-networks">Purging All Unused or Dangling Images, Containers, Volumes, and Networks</h2>
+<p>Docker provides a single command that will clean up any resources — images,<br>
+containers, volumes, and networks — that are dangling (not associated with a<br>
+container):</p>
+<pre><code>      * docker system prune
+</code></pre>
+<p>To additionally remove any stopped containers and all unused images (not just<br>
+dangling images), add the <code>-a</code> flag to the command:</p>
+<pre><code>      * docker system prune -a
+</code></pre>
+<h2 id="removing-docker-images">Removing Docker Images</h2>
+<h3 id="remove-one-or-more-specific-images">Remove one or more specific images</h3>
+<p>Use the <code>docker images</code> command with the <code>-a</code> flag to locate the ID of the<br>
+images you want to remove. This will show you every image, including<br>
+intermediate image layers. When you’ve located the images you want to delete,<br>
+you can pass their ID or tag to <code>docker rmi</code>:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker images -a
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker rmi Image Image
+</code></pre>
+<h3 id="remove-dangling-images">Remove dangling images</h3>
+<p>Docker images consist of multiple layers. Dangling images are layers that have<br>
+no relationship to any tagged images. They no longer serve a purpose and<br>
+consume disk space. They can be located by adding the filter flag, <code>-f</code> with a<br>
+value of <code>dangling=true</code> to the <code>docker images</code> command. When you’re sure you<br>
+want to delete them, you can use the <code>docker images purge</code> command:</p>
+<p><strong>Note:</strong> If you build an image without tagging it, the image will appear on<br>
+the list of dangling images because it has no association with a tagged image.<br>
+You can avoid this situation by [providing a<br>
+tag](https://docs.docker.com/engine/reference/commandline/build/#/tag-image--<br>
+t) when you build, and you can retroactively tag an images with the <a href="https://docs.docker.com/engine/reference/commandline/tag/">docker<br>
+tag</a> command.</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker images -f dangling=true
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker images purge
+</code></pre>
+<h3 id="removing-images-according-to-a-pattern">Removing images according to a pattern</h3>
+<p>You can find all the images that match a pattern using a combination of<br>
+<code>docker images</code> and<br>
+[<code>grep</code>](https://www.digitalocean.com/community/tutorials/using-grep-regular-<br>
+expressions-to-search-for-text-patterns-in-linux). Once you’re satisfied, you<br>
+can delete them by using <code>awk</code> to pass the IDs to <code>docker rmi</code>. Note that<br>
+these utilities are not supplied by Docker and are not necessarily available<br>
+on all systems:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker images -a |  grep &quot;pattern&quot;
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker images -a | grep &quot;pattern&quot; | awk '{print $3}' | xargs docker rmi
+</code></pre>
+<h3 id="remove-all-images">Remove all images</h3>
+<p>All the Docker images on a system can be listed by adding <code>-a</code> to the <code>docker images</code> command. Once you’re sure you want to delete them all, you can add the<br>
+<code>-q</code> flag to pass the Image ID to <code>docker rmi</code>:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker images -a
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker rmi $(docker images -a -q)
+</code></pre>
+<h2 id="removing-containers">Removing Containers</h2>
+<h3 id="remove-one-or-more-specific-containers">Remove one or more specific containers</h3>
+<p>Use the <code>docker ps</code> command with the <code>-a</code> flag to locate the name or ID of the<br>
+containers you want to remove:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker ps -a
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker rm ID_or_Name ID_or_Name
+</code></pre>
+<h3 id="remove-a-container-upon-exit">Remove a container upon exit</h3>
+<p>If you know when you’re creating a container that you won’t want to keep it<br>
+around once you’re done, you can run <code>docker run --rm</code> to automatically delete<br>
+it when it exits.</p>
+<p><strong>Run and Remove:</strong></p>
+<pre><code>      *  docker run --rm image_name
+</code></pre>
+<h3 id="remove-all-exited-containers">Remove all exited containers</h3>
+<p>You can locate containers using <code>docker ps -a</code> and filter them by their<br>
+status: created, restarting, running, paused, or exited. To review the list of<br>
+exited containers, use the <code>-f</code> flag to filter based on status. When you’ve<br>
+verified you want to remove those containers, using <code>-q</code> to pass the IDs to<br>
+the <code>docker rm</code> command.</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker ps -a -f status=exited
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker rm $(docker ps -a -f status=exited -q)
+</code></pre>
+<h3 id="remove-containers-using-more-than-one-filter">Remove containers using more than one filter</h3>
+<p>Docker filters can be combined by repeating the filter flag with an additional<br>
+value. This results in a list of containers that meet either condition. For<br>
+example, if you want to delete all containers marked as either <strong>Created</strong> (a<br>
+state which can result when you run a container with an invalid command) or<br>
+<strong>Exited</strong> , you can use two filters:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker ps -a -f status=exited -f status=created
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker rm $(docker ps -a -f status=exited -f status=created -q)
+</code></pre>
+<h3 id="remove-containers-according-to-a-pattern">Remove containers according to a pattern</h3>
+<p>You can find all the containers that match a pattern using a combination of<br>
+<code>docker ps</code> and [grep](https://www.digitalocean.com/community/tutorials/using-<br>
+grep-regular-expressions-to-search-for-text-patterns-in-linux). When you’re<br>
+satisfied that you have the list you want to delete, you can use <code>awk</code> and<br>
+<code>xargs</code> to supply the ID to <code>docker rmi</code>. Note that these utilities are not<br>
+supplied by Docker and not necessarily available on all systems:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker ps -a |  grep &quot;pattern”
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker ps -a | grep &quot;pattern&quot; | awk '{print $3}' | xargs docker rmi
+</code></pre>
+<h3 id="stop-and-remove-all-containers">Stop and remove all containers</h3>
+<p>You can review the containers on your system with <code>docker ps</code>. Adding the <code>-a</code><br>
+flag will show all containers. When you’re sure you want to delete them, you<br>
+can add the <code>-q</code> flag to supply the IDs to the <code>docker stop</code> and <code>docker rm</code><br>
+commands:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker ps -a
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker stop $(docker ps -a -q)
+
+  * docker rm $(docker ps -a -q)
+</code></pre>
+<h2 id="removing-volumes">Removing Volumes</h2>
+<h3 id="remove-one-or-more-specific-volumes-docker-19-and-later">Remove one or more specific volumes - Docker 1.9 and later</h3>
+<p>Use the <code>docker volume ls</code> command to locate the volume name or names you wish<br>
+to delete. Then you can remove one or more volumes with the <code>docker volume rm</code><br>
+command:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker volume ls
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker volume rm volume_name volume_name
+</code></pre>
+<h3 id="remove-dangling-volumes-docker-19-and-later">Remove dangling volumes - Docker 1.9 and later</h3>
+<p>Since the point of volumes is to exist independent from containers, when a<br>
+container is removed, a volume is not automatically removed at the same time.<br>
+When a volume exists and is no longer connected to any containers, it’s called<br>
+a dangling volume. To locate them to confirm you want to remove them, you can<br>
+use the <code>docker volume ls</code> command with a filter to limit the results to<br>
+dangling volumes. When you’re satisfied with the list, you can remove them all<br>
+with <code>docker volume prune</code>:</p>
+<p><strong>List:</strong></p>
+<pre><code>      *  docker volume ls -f dangling=true
+</code></pre>
+<p><strong>Remove:</strong></p>
+<pre><code>      *  docker volume prune
+</code></pre>
+<h3 id="remove-a-container-and-its-volume">Remove a container and its volume</h3>
+<p>If you created an unnamed volume, it can be deleted at the same time as the<br>
+container with the <code>-v</code> flag. Note that this only works with <em>unnamed</em><br>
+volumes. When the container is successfully removed, its ID is displayed. Note<br>
+that no reference is made to the removal of the volume. If it is unnamed, it<br>
+is silently removed from the system. If it is named, it silently stays<br>
+present.</p>
+<p><strong>Remove:</strong></p>
+<pre><code>     *  docker rm -v container_name
+</code></pre>
 
               </div>
               <div class="post-footer">
@@ -474,7 +677,7 @@ window.addEventListener('load', function() {
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://dadada12138.github.io/post/about" title="关于">https://dadada12138.github.io/post/about</a>
+      <a href="https://dadada12138.github.io/post/how-to-remove-docker-images-containers-and-volumes" title="How To Remove Docker Images, Containers, and Volumes">https://dadada12138.github.io/post/how-to-remove-docker-images-containers-and-volumes</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
@@ -489,6 +692,10 @@ window.addEventListener('load', function() {
       
     </div>
     <div class="nav-next">
+      
+        <a class="nav-pc-next" href="https://dadada12138.github.io/post/hello-gridea">Hello Gridea</a>
+        <a class="nav-mobile-next" href="https://dadada12138.github.io/post/hello-gridea">下一篇</a>
+        <i class="iconfont icon-angle_right"></i>
       
     </div>
   </div>
